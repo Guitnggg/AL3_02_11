@@ -91,6 +91,9 @@ public:
 	//AABBを取得
 	AABB GetAABB();
 
+	// デスフラグのgetter
+	bool IsDead() const { return isDead_; }
+
 private:
 	static inline const float kAcceleration = 0.1f;
 	static inline const float kAttenuation = 0.5f;
@@ -125,6 +128,8 @@ private:
 	bool onGround_ = true;
 	// 着地フラグ
 	bool landing = false;
+	//デスフラグ
+	bool isDead_ = false;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
@@ -135,7 +140,5 @@ private:
 	LRDirection lrDirection_ = LRDirection::kRight;
 	// マップチップによるフィールド
 	MapChipField* mapchipField_ = nullptr;
-
-	//AABBを取得
 
 };

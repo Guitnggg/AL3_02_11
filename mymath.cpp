@@ -1,4 +1,4 @@
-#include "mymath.h"
+﻿#include "myMath.h"
 
 // Vector3の足し算
 Vector3 operator+(const Vector3& v1, const Vector3& v2) {
