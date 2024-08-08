@@ -91,8 +91,11 @@ public:
 	//AABBを取得
 	AABB GetAABB();
 
+	// デスフラグのgetter
+	bool IsDead() const { return isDead_; }
+
 private:
-	static inline const float kAcceleration = 0.1f;
+	static inline const float kAcceleration = 0.01f;
 	static inline const float kAttenuation = 0.5f;
 	static inline const float kLimitRunSpeed = 0.8f;
 	// 旋回時間<秒>
@@ -114,8 +117,8 @@ private:
 	static inline const float kAttenuationWall = 1.0f;
 
 	// キャラクターの当たり判定サイズ
-	static inline const float kWidth = 1.0f;
-	static inline const float kHeight = 1.0f;
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
 
 	// 旋回開始時の角度
 	float turnFirstRotationY_ = 0.0f;
@@ -125,6 +128,8 @@ private:
 	bool onGround_ = true;
 	// 着地フラグ
 	bool landing = false;
+	//デスフラグ
+	bool isDead_ = false;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
@@ -135,7 +140,5 @@ private:
 	LRDirection lrDirection_ = LRDirection::kRight;
 	// マップチップによるフィールド
 	MapChipField* mapchipField_ = nullptr;
-
-	//AABBを取得
 
 };
