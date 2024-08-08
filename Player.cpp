@@ -132,7 +132,7 @@ void Player::move() {
 		// 着地
 		if (landing) {
 			// めり込み排斥
-			worldTransform_.translation_.y = 3.0f;
+			worldTransform_.translation_.y = std::floor(worldTransform_.translation_.y) + 0.5f + kHeight / 2.0f;
 			// 摩擦で横方向速度が減衰する
 			velocity_.x *= (1.0f - kAttenuationLanding);
 			// 下方向速度をリセット
@@ -203,38 +203,30 @@ void Player::MapBottomCollision(CollisionMapInfo& info) {
 	}
 
 	MapChipType mapChipType;
-	MapChipType mapChipTypeNext;
 	bool hit = false;
 	// 真下の当たり判定を行う
 	// 左下点の判定
 	MapChipField::IndexSet indexSet;
 	indexSet = mapchipField_->GetMapChipIndexSetByPosition(positionsNew[kLeftBottom]);
 	mapChipType = mapchipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	mapChipTypeNext = mapchipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
 
-	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
+	if (mapChipType == MapChipType::kBlock) {
 		hit = true;
 	}
 	// 右下点の判定
 	indexSet = mapchipField_->GetMapChipIndexSetByPosition(positionsNew[kRightBottom]);
 	mapChipType = mapchipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-	mapChipTypeNext = mapchipField_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
-	if (mapChipType == MapChipType::kBlock && mapChipTypeNext != MapChipType::kBlock) {
+	if (mapChipType == MapChipType::kBlock) {
 		hit = true;
 	}
 
 	// ブロックにヒット？
 	if (hit) {
-		MapChipField::IndexSet indexSetNow;
-		indexSetNow = mapchipField_->GetMapChipIndexSetByPosition(worldTransform_.translation_ + Vector3(0, -kHeight / 2.0f, 0));
-
-		if (indexSetNow.yIndex != indexSet.yIndex) {
-			// めり込みを排除する方向に移動量を設定する
-			indexSet = mapchipField_->GetMapChipIndexSetByPosition(worldTransform_.translation_ + info.moveAmount + Vector3(0, -kHeight / 2.0f, 0));
-			MapChipField::Rect rect = mapchipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-			info.moveAmount.y = std::min(0.0f, rect.top - worldTransform_.translation_.y + (kHeight / 2.0f + kBlank));
-			info.onGround = true;
-		}
+		// めり込みを排除する方向に移動量を設定する
+		indexSet = mapchipField_->GetMapChipIndexSetByPosition(worldTransform_.translation_ + Vector3(0, -kHeight / 2.0f, 0));
+		MapChipField::Rect rect = mapchipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		info.moveAmount.y = std::min(0.0f, rect.top - worldTransform_.translation_.y + (kHeight / 2.0f));
+		info.onGround = true;
 	}
 }
 // マップ衝突判定右
