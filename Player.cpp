@@ -38,7 +38,7 @@ void Player::Update() {
 	WallHit(collisionMapInfo);
 
 	// 移動
-	worldTransform_.translation_ = worldTransform_.translation_ + velocity_;
+//	worldTransform_.translation_ = worldTransform_.translation_ + velocity_;
 	// 行列計算
 	worldTransform_.UpdateMatrix();
 }
@@ -114,12 +114,7 @@ void Player::move() {
 	}
 	// 地面との当たり判定
 	// 下降中？
-	if (velocity_.y < 0) {
-		// Y座標が地面以下になったら着地
-		if (worldTransform_.translation_.y <= 1.0f) {
-			landing = true;
-		}
-	}
+
 	// 着地判定
 	if (onGround_) {
 		// ジャンプ開始
@@ -223,9 +218,10 @@ void Player::MapBottomCollision(CollisionMapInfo& info) {
 	// ブロックにヒット？
 	if (hit) {
 		// めり込みを排除する方向に移動量を設定する
-		indexSet = mapchipField_->GetMapChipIndexSetByPosition(worldTransform_.translation_ + Vector3(0, -kHeight / 2.0f, 0));
-		MapChipField::Rect rect = mapchipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
-		info.moveAmount.y = std::min(0.0f, rect.top - worldTransform_.translation_.y + (kHeight / 2.0f));
+		//indexSet = mapchipField_->GetMapChipIndexSetByPosition(worldTransform_.translation_ + Vector3(0, -kHeight / 2.0f, 0));
+ 		MapChipField::Rect rect = mapchipField_->GetRectByIndex(indexSet.xIndex, indexSet.yIndex);
+		float offset = rect.top - worldTransform_.translation_.y + (kHeight / 2.0f);
+		info.moveAmount.y = std::min(0.0f, offset);
 		info.onGround = true;
 	}
 }
@@ -313,7 +309,7 @@ void Player::MapLeftCollision(CollisionMapInfo& info) {
 void Player::ResultMove(const CollisionMapInfo& info) {
 	// 移動
 	worldTransform_.translation_.x += info.moveAmount.x;
-	worldTransform_.translation_.z += info.moveAmount.z;
+	worldTransform_.translation_.y += info.moveAmount.y;
 }
 
 // 天井に接触している場合の処理
