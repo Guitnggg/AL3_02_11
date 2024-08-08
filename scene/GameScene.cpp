@@ -16,7 +16,7 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 	delete debugCamera_;
-	delete modelBlocks_;
+	
 	delete modelEnemy_;
 	for (Enemy* enemy : enemies_) {
 		delete enemy;
@@ -67,7 +67,7 @@ void GameScene::Initialize() {
 	deathParticles_->Initialize(modelParticles_, &viewProjection_, playerPosition);
 
 	//  3Dモデルの生成
-	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	modelSkydome_ = Model::CreateFromOBJ("sphere", true);
 	// 天球の生成
 	skydome_ = new Skydome();
 	// 天球の初期化
