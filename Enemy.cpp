@@ -1,4 +1,4 @@
-﻿
+
 #include "Enemy.h"
 #include "mymath.h"
 #include <numbers>
@@ -21,7 +21,7 @@ void Enemy::Initialize(Model* model, ViewProjection* viewProjection, const Vecto
 void Enemy::Update()
 {
 	// 移動
-	worldTransform_.translation_.x += velocity_.x;
+	/*worldTransform_.translation_.x += velocity_.x;*/
 	// タイマーを加算
 	walkTimer_ += 1.0f / 60.0f;
 	//回転アニメーション
