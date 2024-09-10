@@ -1,4 +1,4 @@
-﻿#include "CameraController.h"
+#include "CameraController.h"
 #include "Player.h"
 #include "mymath.h"
 void CameraController::Initialize(ViewProjection* viewProjection, Rect movableArea) {

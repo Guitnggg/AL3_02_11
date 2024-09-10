@@ -50,10 +50,10 @@ void Player::move() {
 	//  接地状態
 	if (onGround_) {
 		// 左右移動操作
-		if (Input::GetInstance()->PushKey(DIK_D) || Input::GetInstance()->PushKey(DIK_A)) {
+		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
 			// 左右加速
 			Vector3 acceleration = {};
-			if (Input::GetInstance()->PushKey(DIK_D)) {
+			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
 				// 左移動中の右入力
 				if (velocity_.x < 0.0f) {
 					// 速度と逆方向に入力中は急ブレーキ
@@ -66,7 +66,7 @@ void Player::move() {
 				}
 				acceleration.x += kAcceleration;
 			}
-			else if (Input::GetInstance()->PushKey(DIK_A)) {
+			else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
 				// 右移動中の左入力
 				if (velocity_.x > 0.0f) {
 					// 速度と逆方向に入力中は急ブレーキ
@@ -100,13 +100,61 @@ void Player::move() {
 			// 非入力時は移動減衰をかける
 			velocity_.x *= (1.0f - kAttenuation);
 		}
-		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		if (Input::GetInstance()->PushKey(DIK_UP)) {
 			// ジャンプ初速
 			velocity_ = Add(velocity_, Vector3(0, kJumpAcceleration, 0));
 		}
 		// 空中
 	}
 	else {
+
+		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT)) {
+			// 左右加速
+			Vector3 acceleration = {};
+			if (Input::GetInstance()->PushKey(DIK_RIGHT)) {
+				// 左移動中の右入力
+				if (velocity_.x < 0.0f) {
+					// 速度と逆方向に入力中は急ブレーキ
+					velocity_.x *= (1.0f - kAttenuation);
+				}
+				if (lrDirection_ != LRDirection::kRight) {
+					lrDirection_ = LRDirection::kRight;
+					turnFirstRotationY_ = worldTransform_.rotation_.y;
+					turnTimer_ = kTimeTurn;
+				}
+				acceleration.x += kAcceleration;
+			}
+			else if (Input::GetInstance()->PushKey(DIK_LEFT)) {
+				// 右移動中の左入力
+				if (velocity_.x > 0.0f) {
+					// 速度と逆方向に入力中は急ブレーキ
+					velocity_.x *= (1.0f - kAttenuation);
+				}
+				if (lrDirection_ != LRDirection::kLeft) {
+					lrDirection_ = LRDirection::kLeft;
+					turnFirstRotationY_ = worldTransform_.rotation_.y;
+					turnTimer_ = kTimeTurn;
+				}
+				acceleration.x -= kAcceleration;
+			}
+			// 加速/減速
+			velocity_ = Add(velocity_, acceleration);
+			// 最大速度制限
+			velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
+			// 旋回制御
+			if (turnTimer_ > 0.0f) {
+				turnTimer_ -= 1.0f / 60.0f;
+				// 左右の目キャラ角度テーブル
+				float destinationRotationYTable[] = { std::numbers::pi_v<float> / 2.0f, std::numbers::pi_v<float> *3.0f / 2.0f };
+				// 状態に応じた角度を取得する
+				float destinationRotationY = destinationRotationYTable[static_cast<uint32_t>(lrDirection_)];
+				float easing = 1 - turnTimer_ / kTimeTurn;
+				float nowRotationY = std::lerp(turnFirstRotationY_, destinationRotationY, easing);
+				// 自キャラの角度を設定する
+				worldTransform_.rotation_.y = nowRotationY;
+			}
+		}
+
 		// 落下速度
 		velocity_ = Add(velocity_, Vector3(0, -kGravityAcceleration, 0));
 		// 落下速度制限

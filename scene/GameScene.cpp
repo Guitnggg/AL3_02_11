@@ -44,7 +44,7 @@ void GameScene::Initialize() {
 	// 自キャラの生成(モデル)
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 	// 座標をマップチップ番号で指定
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(3, 67);
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(13, 10);
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, &viewProjection_, playerPosition);
 	player_->SetMapChipField(mapChipField_);
@@ -257,8 +257,8 @@ void GameScene::GenerateBlocks() {
 		uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 		// 要素数を変更する
 		// 列数を設定(縦方向のブロック数)
-		worldTransformBlocks_.resize(100);
-		for (uint32_t i = 0; i < 100; ++i) {
+		worldTransformBlocks_.resize(200);
+		for (uint32_t i = 0; i < 200; ++i) {
 			// 一列の要素数を設定(横ブロック数)
 			worldTransformBlocks_[i].resize(numBlockHorizontal);
 		}
